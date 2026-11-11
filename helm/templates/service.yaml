@@ -3,17 +3,14 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}
   labels:
-    app.kubernetes.io/name: {{ .Release.Name }}
-    helm.sh/chart: {{ .Release.Name }}
+    app.kubernetes.io/name: zenda
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetport }}
-      protocol: TCP
-      name: http
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: http
   selector:
-    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/name: zenda
     app.kubernetes.io/instance: {{ .Release.Name }}

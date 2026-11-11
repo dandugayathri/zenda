@@ -1,66 +1,30 @@
 replicaCount: 1
-autoscaling:
-  enabled: false
-
 
 image:
-  repository: ""
-  pullPolicy: IfNotPresent
-  tag: ""
-  #PullSecrets: ""
-labels: {}
-
-nameOverride: ""
-fullnameOverride: ""
-
-ingress:
-  enabled: false
-  host: 
+  repository: dandugayathri/zenda
+  tag: latest
+  pullPolicy: Always
 
 service:
   type: ClusterIP
   port: 80
-  targetport: 8080
 
-vault:
-  enabled: false
-  secret: 
-
-resources: 
- limits:
-   memory: 1Gi
- requests:
-   memory: 1Gi
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
 
 startupProbe:
-  enabled: true
-  path: /v1/api/actuator/health/liveness
-  initialDelaySeconds: 20
-  periodSeconds: 20
-  timeoutSeconds: 10
-  successThreshold: 1
-  failureThreshold: 4
-  port: 8080
+  path: /actuator/health/liveness
+  periodSeconds: 5
+  failureThreshold: 30
+
 livenessProbe:
-  enabled: true
-  path: /v1/api/actuator/health/liveness
-  initialDelaySeconds: 60
-  periodSeconds: 20
-  timeoutSeconds: 10
-  successThreshold: 1
-  failureThreshold: 4
-  port: 8080
+  path: /actuator/health/liveness
+  periodSeconds: 10
+
 readinessProbe:
-  enabled: true
-  path: /v1/api/actuator/health/readiness
-  initialDelaySeconds: 60 
-  periodSeconds: 20
-  timeoutSeconds: 10 
-  successThreshold: 1
-  failureThreshold: 4
-  port: 8080
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+  path: /actuator/health/readiness
+  periodSeconds: 5
