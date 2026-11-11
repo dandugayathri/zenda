@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish:
+  Build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
