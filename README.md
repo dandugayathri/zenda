@@ -12,7 +12,7 @@ Java 21 and Docker are required. The Maven wrapper downloads Maven 3.9.11 on fir
 curl http://localhost:8080/api/health
 ```
 
-Endpoints: `/api/health` returns JSON `{"status":"UP"}`; `/hello` returns a greeting; `/actuator/health`, `/actuator/health/liveness`, `/actuator/health/readiness`, and `/actuator/prometheus` provide operational checks.
+The landing page at `/` displays **Welcome to Zenda**. `/api/health` returns JSON `{"status":"UP"}`; `/hello` returns a greeting; `/actuator/health`, `/actuator/health/liveness`, `/actuator/health/readiness`, and `/actuator/prometheus` provide operational checks.
 
 ## Build and publish an image manually
 
