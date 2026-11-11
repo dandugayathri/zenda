@@ -16,6 +16,5 @@ kubectl create namespace zenda --dry-run=client -o yaml | kubectl apply -f -
 kubectl apply -n argocd --server-side --force-conflicts \
   -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.1/manifests/install.yaml
 kubectl -n argocd rollout status deployment/argocd-server --timeout=5m
-kubectl apply -f argocd/application.yaml
 kubectl get nodes
-kubectl get applications -n argocd
+echo "After pushing both branches, apply argocd/application.yaml to start GitOps sync."

@@ -11,7 +11,7 @@ This branch contains the Helm chart, a two-node kind configuration, and an Argo 
 
 ## Create the local cluster
 
-Run `bash scripts/bootstrap-kind.sh` on this branch. The script creates one control-plane node and one worker node, creates namespaces `argocd` and `zenda`, installs Argo CD v3.6.1 into `argocd`, and creates the `zenda` Application. It can be run again safely.
+Run `bash scripts/bootstrap-kind.sh` on this branch. The script creates one control-plane node and one worker node, creates namespaces `argocd` and `zenda`, and installs Argo CD v3.6.1 into `argocd`. It can be run again safely. After you push both branches and the first `main` CI run has published an image, run `kubectl apply -f argocd/application.yaml` from this branch to create the `zenda` Application.
 
 Argo CD reads `helm/` from the pushed `argo-deployment` branch. A push to `main` runs the CI workflow, builds and pushes `dandugayathri/zenda:sha-<commit>`, then commits that image tag into `helm/values.yaml` on this branch. Automated sync then deploys it. If the GitHub repository is private, register read access to it in Argo CD before expecting the Application to sync.
 
