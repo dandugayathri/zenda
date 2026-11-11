@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: dandugayathri/zenda
-  tag: latest
+  tag: sha-e926b00a5e48fc21ae74d69544a7952797884efd
   pullPolicy: Always
 
 service:
