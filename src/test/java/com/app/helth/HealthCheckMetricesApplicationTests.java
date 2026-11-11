@@ -48,4 +48,11 @@ class HealthCheckMetricesApplicationTests {
 				.andExpect(content().string("Hello, World!"));
 	}
 
+	@Test
+	void apiHealthReturnsUp() throws Exception {
+		mockMvc.perform(get("/api/health"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.status").value("UP"));
+	}
+
 }

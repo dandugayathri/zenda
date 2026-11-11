@@ -1,0 +1,59 @@
+name: Build and publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zenda-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Test and package
+        run: ./mvnw -B -ntp verify
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: dandugayathri
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push public image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            dandugayathri/zenda:latest
+            dandugayathri/zenda:sha-${{ github.sha }}
+      - name: Check out GitOps branch
+        uses: actions/checkout@v4
+        with:
+          ref: argo-deployment
+          path: gitops
+      - name: Update image tag for Argo CD
+        env:
+          IMAGE_TAG: sha-${{ github.sha }}
+        run: |
+          cd gitops
+          sed -i "s/^  tag: .*/  tag: ${IMAGE_TAG}/" helm/values.yaml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add helm/values.yaml
+          if ! git diff --cached --quiet; then
+            git commit -m "Deploy ${IMAGE_TAG}"
+            git push origin HEAD:argo-deployment
+          fi
