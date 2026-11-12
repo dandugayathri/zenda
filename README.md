@@ -1,5 +1,7 @@
 # Zenda GitOps deployment (`argo-deployment` branch)
 
+Project commits: [dandugayathri](https://github.com/dandugayathri/zenda/commits?author=dandugayathri).
+
 
 kubectl get nodes
 kubectl get pods -n argocd
