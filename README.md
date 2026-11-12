@@ -2,6 +2,8 @@
 
 This project is a small Spring Boot application deployed with Docker, GitHub Actions, Helm and Argo CD. I used two branches:
 
+Project commits: [dandugayathri](https://github.com/dandugayathri/zenda/commits?author=dandugayathri).
+
 - `main` has the Java code, tests, Dockerfile and GitHub Actions workflow.
 - `argo-deployment` has the kind cluster file, Helm chart and Argo CD Application file.
 
