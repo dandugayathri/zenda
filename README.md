@@ -2,7 +2,6 @@
 
 This project is a small Spring Boot application deployed with Docker, GitHub Actions, Helm and Argo CD. I used two branches:
 
-Project commits: [dandugayathri](https://github.com/dandugayathri/zenda/commits?author=dandugayathri).
 
 - `main` has the Java code, tests, Dockerfile and GitHub Actions workflow.
 - `argo-deployment` has the kind cluster file, Helm chart and Argo CD Application file.
@@ -85,7 +84,7 @@ Normally, GitHub Actions does the build and push after a commit reaches `main`.
 Switch to the deployment branch. Its `kind-config.yaml` defines one control-plane node and one worker node:
 
 ```sh
-git switch argo-deployment
+git checkout argo-deployment
 cat kind-config.yaml
 kind create cluster --name zenda --config kind-config.yaml --wait 5m
 kubectl config use-context kind-zenda
@@ -97,9 +96,9 @@ If `kind get clusters` already shows `zenda`, skip the `kind create cluster` com
 Create the two namespaces:
 
 ```sh
-kubectl create namespace argocd
-kubectl create namespace zenda
-kubectl get namespaces
+kubectl create ns argocd
+kubectl create ns zenda
+kubectl get ns
 ```
 
 `argocd` holds Argo CD. `zenda` holds the Spring Boot application. If a namespace already exists, there is no need to create it again.
@@ -128,8 +127,6 @@ kubectl -n argocd rollout status deployment/argocd-server --timeout=5m
 kubectl get pods -n argocd
 ```
 
-The `--server-side` option is needed for the large Argo CD resource definitions. The pods should become `Running`.
-
 ## 7. Set up GitHub Actions and Docker Hub
 
 Create a **public** Docker Hub repository named `dandugayathri/zenda`. Create a Docker Hub access token that can push images to it. In the GitHub repository, go to **Settings → Secrets and variables → Actions** and add this repository secret:
@@ -140,7 +137,7 @@ Create a **public** Docker Hub repository named `dandugayathri/zenda`. Create a 
 
 Do not put the token in a file or commit it. The Docker Hub username is already in the workflow, so it is not a secret.
 
-In GitHub, go to **Settings → Actions → General → Workflow permissions** and select **Read and write permissions**. The workflow needs this to update `helm/values.yaml` on `argo-deployment`. If that branch has protection rules, allow the workflow to update it. No kubeconfig or cluster password is stored in GitHub: the cluster is on the local machine, and Argo CD pulls the Git changes from inside the cluster.
+In GitHub, go to **Settings → Actions → General → Workflow permissions** and select **Read and write permissions**. The workflow needs this to update `helm/values.yaml` on `argo-deployment`. 
 
 The workflow is `.github/workflows/actions.yml` on `main`. On a push to `main`, it runs the Maven tests, builds and pushes `dandugayathri/zenda:latest` and `dandugayathri/zenda:sha-<commit>`, then writes the SHA image tag into `helm/values.yaml` on `argo-deployment`.
 
@@ -171,7 +168,8 @@ kubectl get application zenda -n argocd
 ```sh
 kubectl get nodes
 kubectl get pods -n argocd
-kubectl get pods,deploy,svc -n zenda
+kubectl get pods -n zenda
+kubectl get svc -n zenda
 kubectl -n zenda rollout status deployment/zenda --timeout=5m
 kubectl get application zenda -n argocd
 ```
@@ -198,7 +196,3 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 ```
 
 Keep that password private. To troubleshoot a pod, use `kubectl describe pod -n zenda <pod-name>` and `kubectl logs -n zenda deployment/zenda`.
-
-## 10. Screenshots for the assessment
-
-After the pipeline and deployment work, save at least 10 labeled screenshots in a `screenshots/` folder: the local app, successful Docker build, Docker Hub image, successful GitHub Actions run, `kubectl get nodes`, `kubectl get pods -n zenda`, `kubectl get svc -n zenda`, Argo CD showing Synced/Healthy, the welcome page in the browser, and the `/api/health` response. Do not show tokens or passwords in screenshots.
